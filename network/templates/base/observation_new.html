@@ -27,11 +27,12 @@
       <div class="form-group">
         <label class="col-sm-3 control-label">Satellite</label>
         <div class="col-sm-9">
-          <select id="satellite-selection" class="form-control" name="satellite" autocomplete="off">
+          <select id="satellite-selection" class="form-control" name="satellite" autocomplete="off"
+                  {% if obs_filter.exists %}disabled{% endif %}>
             <option value="" disabled selected>Select a satellite</option>
             {% for satellite in satellites %}
               <option data-norad="{{ satellite.norad_cat_id }}" value="{{ satellite.norad_cat_id }}"
-                      {% ifequal satellite.norad_cat_id norad %}selected{% endifequal %}>
+                      {% ifequal satellite.norad_cat_id obs_filter.norad %}selected{% endifequal %}>
                 {{ satellite.norad_cat_id }} - {{ satellite.name }}
               </option>
             {% endfor %}
@@ -71,7 +72,8 @@
                    class="form-control"
                    name="start-time"
                    data-date-format="YYYY-MM-DD HH:mm"
-                   autocomplete="off">
+                   autocomplete="off"
+                   {% if obs_filter.start_date %}value="{{ obs_filter.start_date }}" disabled{% endif %}>
             <span class="input-group-addon">
               <span class="glyphicon glyphicon-calendar"></span>
             </span>
@@ -87,7 +89,8 @@
                    class="form-control"
                    name="end-time"
                    data-date-format="YYYY-MM-DD HH:mm"
-                   autocomplete="off">
+                   autocomplete="off"
+                   {% if obs_filter.end_date %}value="{{ obs_filter.end_date }}" disabled{% endif %}>
             <span class="input-group-addon">
               <span class="glyphicon glyphicon-calendar"></span>
             </span>

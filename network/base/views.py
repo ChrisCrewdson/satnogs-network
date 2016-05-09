@@ -179,20 +179,26 @@ def observation_new(request):
     satellites = Satellite.objects.filter(transmitters__alive=True).distinct()
     transmitters = Transmitter.objects.filter(alive=True)
 
-    norad = 0
+    obs_filter = {}
     if request.method == 'GET':
-        form = SatelliteFilterForm(request.GET)
-        if form.is_valid():
-            norad = form.cleaned_data['norad']
+        filter_form = SatelliteFilterForm(request.GET)
+        if filter_form.is_valid():
+            obs_filter['exists'] = True
+            obs_filter['norad'] = filter_form.cleaned_data['norad']
+            obs_filter['start_date'] = filter_form.cleaned_data['start_date']
+            obs_filter['end_date'] = filter_form.cleaned_data['end_date']
+            obs_filter['ground_station'] = filter_form.cleaned_data['ground_station']
+        else:
+            obs_filter['exists'] = False
 
     return render(request, 'base/observation_new.html',
                   {'satellites': satellites,
-                   'transmitters': transmitters, 'norad': norad,
+                   'transmitters': transmitters, 'obs_filter': obs_filter,
                    'date_min_start': settings.DATE_MIN_START,
                    'date_max_range': settings.DATE_MAX_RANGE})
 
 
-def prediction_windows(request, sat_id, start_date, end_date):
+def prediction_windows(request, sat_id, start_date, end_date, norad=None):
     try:
         sat = Satellite.objects.filter(transmitters__alive=True). \
             distinct().get(norad_cat_id=sat_id)
@@ -219,6 +225,8 @@ def prediction_windows(request, sat_id, start_date, end_date):
     data = []
 
     stations = Station.objects.all()
+    if norad:
+        stations = stations.filter(norad_cat_id=norad)
     for station in stations:
         if not station.online:
             continue

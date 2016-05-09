@@ -169,13 +169,14 @@
         <th>Rise Time</th>
         <th>Max Altitude</th>
         <th>Rising Azimuth</th>
+        <th></th>
       </thead>
       <tbody>
         {% for nextpass in nextpasses %}
           <tr>
             <td>
               <a href="#" data-toggle="modal" data-target="#SatelliteModal" data-id="{{ nextpass.norad_cat_id }}">
-                {{ nextpass.name }}
+                {{ nextpass.norad_cat_id }} - {{ nextpass.name }}
               </a>
             </td>
             <td>
@@ -186,6 +187,10 @@
             </td>
             <td>
               {{ nextpass.azr }}°
+            </td>
+            <td>
+              <a href="{% url 'base:observation_new' %}?norad={{ nextpass.norad_cat_id }}&ground_station={{ station.id }}&start_date={{ nextpass.tr }}&end_date={{ nextpass.ts }}"
+                 class="btn btn-default">schedule</a>
             </td>
           </tr>
         {% endfor %}
